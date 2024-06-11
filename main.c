@@ -47,7 +47,7 @@ int	ft_atoi(const char *str)
 	return ((int)nbr * neg);
 }
 
-int	check_values(t_data data)
+int	check_values(t_data data) // useconds_t 0 - 1000000?
 {
 	if (data.philos < 1)
 		return (-1);

@@ -15,6 +15,7 @@
 
 # include <stdio.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 typedef struct s_data
 {
@@ -23,11 +24,13 @@ typedef struct s_data
 	int	to_eat;
 	int	to_sleep;
 	int	meals;
+	struct timeval beginning;
 } t_data;
 
 typedef struct s_philo
 {
-	int alive;
+	struct timeval last_meal;
+	int dead;
 } t_philo;
 
 #endif
