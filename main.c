@@ -5,12 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/10 14:16:01 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/10 14:16:03 by amakela          ###   ########.fr       */
+/*   Created: 2024/06/12 13:11:36 by amakela           #+#    #+#             */
+/*   Updated: 2024/06/12 17:16:37 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 static int	overflow(int neg)
 {
@@ -68,6 +70,7 @@ void	init_data(int argc, char **argv, t_data *data)
 	data->to_sleep = ft_atoi(argv[4]);
 	if (argv[argc - 1])
 		data->meals = ft_atoi(argv[argc - 1]);
+	gettimeofday(&data->beginning, NULL);
 }
 
 int	invalid_chars(char **argv)
@@ -79,6 +82,8 @@ int	invalid_chars(char **argv)
 	j = 0;
 	while (argv[i])
 	{
+		if (argv[i][j] == '-' || argv[i][j] == '+')
+			j++;
 		while (argv[i][j])
 		{
 			if (argv[i][j] < '0' || argv[i][j] > '9') 
@@ -96,11 +101,6 @@ int	invalid_chars(char **argv)
 
 int	arg_validation(int argc, char **argv, t_data *data)
 {
-	int i;
-	int j;
-
-	i = 1;
-	j = 0;
 	if (argc < 5 || argc > 6)
 	{
 		printf("error: invalid amount of arguments\n");
@@ -117,12 +117,49 @@ int	arg_validation(int argc, char **argv, t_data *data)
 	return (0);
 }
 
+void	*func()
+{
+	printf("hello\n");
+	return (NULL);
+}
+
+int	get_philos(int count)
+{
+	int			i;
+	pthread_t	philos[count];
+
+	i = 0;
+	while (i < count)
+	{
+		if (pthread_create(&philos[i], NULL, &func, NULL) != 0)
+		{
+			printf("error: creating threads failed\n");
+			return (-1);
+		}
+		i++;
+	}
+	i = 0;
+	while (i < count)
+	{
+		if (pthread_join(philos[i], NULL) != 0)
+		{
+			printf("joining threads failed\n");
+			return (-1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
-	t_data	data;
+	t_data		data;
 
 	data = (t_data){0};
 	if (arg_validation(argc, argv, &data) == -1)
+		return (-1);
+	// printf("BEGINNING\nsec: %ld\nusec: %ld\n", data.beginning.tv_sec, data.beginning.tv_usec);
+	if (get_philos(data.philos) == -1)
 		return (-1);
 	return (0);
 }
