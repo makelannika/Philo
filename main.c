@@ -6,12 +6,11 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/14 17:25:55 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/14 19:32:17 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <unistd.h>
 
 static int      overflow(int neg)
 {
@@ -95,27 +94,25 @@ int get_ms()
 
 void    thinking(t_philo *philo)
 {
-    printf("%d Philo %d is thinking\n", get_ms(), philo->philo);
+    printf("%d Philo %d is thinking 💭\n", get_ms(), philo->philo);
 }
 void    sleeping(t_philo *philo)
 {
-    printf("%d Philo %d is sleeping\n", get_ms(), philo->philo);
+    printf("%d Philo %d is sleeping 💤\n", get_ms(), philo->philo);
     usleep(philo->to_sleep * 1000);
 }
 
 void    eating(t_philo *philo)
 {
     pthread_mutex_lock(philo->fork_l);
-    printf("%d Philo %d picked fork_l\n", get_ms(), philo->philo);
+    printf("%d Philo %d has taken left fork 🍴\n", get_ms(), philo->philo);
     pthread_mutex_lock(philo->fork_r);
-    printf("%d Philo %d picked fork_r\n", get_ms(), philo->philo);
-    printf("%d Philo %d is eating\n", get_ms(), philo->philo);
+    printf("%d Philo %d has taken right fork 🍴\n", get_ms(), philo->philo);
+    printf("%d Philo %d is eating 🍝\n", get_ms(), philo->philo);
     usleep(philo->to_eat * 1000);
-    printf("%d Philo %d ate\n", get_ms(), philo->philo);
+    philo->last_meal = get_ms();
     pthread_mutex_unlock(philo->fork_l);
-    printf("%d Philo %d freed fork_l\n", get_ms(), philo->philo);
     pthread_mutex_unlock(philo->fork_r);
-    printf("%d Philo %d freed fork_r\n", get_ms(), philo->philo);
 }
 
 void    *routine(void *ptr)
@@ -123,11 +120,19 @@ void    *routine(void *ptr)
     t_philo *philo;
     
     philo = (t_philo *)ptr;
+    philo->last_meal = get_ms();
     if (philo->philo == 1)
         usleep(1000);
-    eating(philo);
-    sleeping(philo);
-    thinking(philo);
+    while (1)
+    {
+        eating(philo);
+        if (philo->meals != -1)
+            philo->meals--;
+        if (philo->meals == 0)
+            return (ptr);
+        sleeping(philo);
+        thinking(philo);
+    }
     return (NULL);
 }
 
@@ -144,14 +149,16 @@ void    destroy_forks(t_philo *philos, int count)
     }
 }
 
-
-void    set_forks(pthread_mutex_t *forks, t_philo *philos, int count) // check mutex inits
+int    set_forks(pthread_mutex_t *forks, t_philo *philos, int count)
 {
     int             i;
 
     i = 0;
     while (i < count)
-		pthread_mutex_init(&forks[i++], NULL);
+	{
+        if (pthread_mutex_init(&forks[i++], NULL))
+            return (1);
+    }
     i = 0;
     while (i < count - 1)
     {
@@ -161,6 +168,7 @@ void    set_forks(pthread_mutex_t *forks, t_philo *philos, int count) // check m
     }
     philos[i].fork_l = &forks[i];
     philos[i].fork_r = &forks[0];
+    return (0);
 }
 
 void    init_philos(t_philo *philos, int argc, char **argv)
@@ -194,7 +202,8 @@ int    simulation(int argc, char **argv, int count)
 
     i = 0;
     init_philos(philos, argc, argv);
-    set_forks(forks, philos, count);
+    if (set_forks(forks, philos, count))
+        return (1);
     while (i < count)
     {
         if (pthread_create(&philos[i].thread, NULL, &routine, &philos[i]) != 0)
