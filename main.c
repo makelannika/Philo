@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/14 17:04:57 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/14 17:25:55 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,28 +86,36 @@ int arg_validation(int argc, char **argv)
     return (check_values(argv));
 }
 
+int get_ms()
+{
+    struct timeval  time;
+    gettimeofday(&time, NULL);
+    return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
 void    thinking(t_philo *philo)
 {
-    printf("Philo %d is thinking\n", philo->philo);
+    printf("%d Philo %d is thinking\n", get_ms(), philo->philo);
 }
 void    sleeping(t_philo *philo)
 {
-    printf("Philo %d is sleeping\n", philo->philo);
-    usleep(philo->to_sleep);
+    printf("%d Philo %d is sleeping\n", get_ms(), philo->philo);
+    usleep(philo->to_sleep * 1000);
 }
 
 void    eating(t_philo *philo)
 {
     pthread_mutex_lock(philo->fork_l);
-    printf("Philo %d picked fork_l\n", philo->philo);
+    printf("%d Philo %d picked fork_l\n", get_ms(), philo->philo);
     pthread_mutex_lock(philo->fork_r);
-    printf("Philo %d picked fork_r\n", philo->philo);
-    printf("Philo %d is eating\n", philo->philo);
-    usleep(philo->to_eat);
+    printf("%d Philo %d picked fork_r\n", get_ms(), philo->philo);
+    printf("%d Philo %d is eating\n", get_ms(), philo->philo);
+    usleep(philo->to_eat * 1000);
+    printf("%d Philo %d ate\n", get_ms(), philo->philo);
     pthread_mutex_unlock(philo->fork_l);
-    printf("Philo %d freed fork_l\n", philo->philo);
+    printf("%d Philo %d freed fork_l\n", get_ms(), philo->philo);
     pthread_mutex_unlock(philo->fork_r);
-    printf("Philo %d freed fork_r\n", philo->philo);
+    printf("%d Philo %d freed fork_r\n", get_ms(), philo->philo);
 }
 
 void    *routine(void *ptr)
@@ -116,7 +124,7 @@ void    *routine(void *ptr)
     
     philo = (t_philo *)ptr;
     if (philo->philo == 1)
-        sleep(1);
+        usleep(1000);
     eating(philo);
     sleeping(philo);
     thinking(philo);
