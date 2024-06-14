@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:46:35 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/14 18:14:59 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/14 19:38:52 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct s_philo
 {
 	int				num_of_philos;
 	int				philo;
-	int				*dead;
+	int				dead;
 	int				to_die;
 	int				to_eat;
 	int				to_sleep;
