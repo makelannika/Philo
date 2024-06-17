@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/14 19:32:17 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/17 12:13:01 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,14 @@ void    eating(t_philo *philo)
 {
     pthread_mutex_lock(philo->fork_l);
     printf("%d Philo %d has taken left fork 🍴\n", get_ms(), philo->philo);
+    if (philo->num_of_philos == 1)
+    {
+        usleep(philo->to_die * 1000);
+        printf("%d Philo %d died\n", get_ms(), philo->philo);
+        pthread_mutex_unlock(philo->fork_l);
+        philo->dead = 1;
+        return ;
+    }
     pthread_mutex_lock(philo->fork_r);
     printf("%d Philo %d has taken right fork 🍴\n", get_ms(), philo->philo);
     printf("%d Philo %d is eating 🍝\n", get_ms(), philo->philo);
@@ -126,6 +134,8 @@ void    *routine(void *ptr)
     while (1)
     {
         eating(philo);
+        if (philo->dead == 1)
+            return (ptr);
         if (philo->meals != -1)
             philo->meals--;
         if (philo->meals == 0)
