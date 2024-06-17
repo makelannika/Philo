@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/17 12:47:12 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/17 12:51:06 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int check_values(char **argv)
         return (write(2, "invalid time to eat\n", 20));
     if (ft_atoi(argv[4]) < 1)
         return (write(2, "invalid time to sleep\n", 22));
+    if (ft_atoi(argv[5]) == 0) 
+        return (1);
     return (0);
 }
 
@@ -133,8 +135,6 @@ void    *routine(void *ptr)
         usleep(1000);
     while (1)
     {
-        if (philo->meals == 0)
-            return (ptr);
         eating(philo);
         if (philo->dead == 1)
             return (ptr);
