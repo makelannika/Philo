@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/17 12:13:01 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/17 12:47:12 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,11 +133,12 @@ void    *routine(void *ptr)
         usleep(1000);
     while (1)
     {
+        if (philo->meals == 0)
+            return (ptr);
         eating(philo);
         if (philo->dead == 1)
             return (ptr);
-        if (philo->meals != -1)
-            philo->meals--;
+        philo->meals--;
         if (philo->meals == 0)
             return (ptr);
         sleeping(philo);
