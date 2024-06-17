@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/17 17:01:13 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/17 18:38:58 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	get_ms(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void	only_philo(t_philo *philo)
+void	lonely_philo(t_philo *philo)
 {
 	usleep(philo->to_die * 1000);
 	printf("%d Philo %d died\n", get_ms(), philo->philo);
@@ -114,8 +114,6 @@ void	philo_dead(t_philo *philo)
 
 void	thinking(t_philo *philo)
 {
-	if (get_ms() >= philo->last_meal + philo->to_die)
-		philo_dead(philo);
 	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d is thinking 💭\n", get_ms(), philo->philo);
@@ -124,11 +122,6 @@ void	thinking(t_philo *philo)
 
 void	sleeping(t_philo *philo)
 {
-	if ((get_ms() + philo->to_sleep) >= (philo->last_meal + philo->to_die))
-	{
-		usleep((philo->last_meal + philo->to_die) - get_ms());
-		philo_dead(philo);
-	}
 	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d is sleeping 💤\n", get_ms(), philo->philo);
@@ -140,25 +133,21 @@ void	sleeping(t_philo *philo)
 void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->fork_l);
-	if (get_ms() >= philo->last_meal + philo->to_die)
-		philo_dead(philo);
 	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d has taken left fork 🍴\n", get_ms(), philo->philo);
 	pthread_mutex_unlock(philo->print);
 	if (philo->num_of_philos == 1)
-		return (only_philo(philo));
+		return (lonely_philo(philo));
 	pthread_mutex_lock(philo->fork_r);
-	if (get_ms() >= philo->last_meal + philo->to_die)
-		philo_dead(philo);
 	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d has taken right fork 🍴\n", get_ms(), philo->philo);
+	philo->last_meal = get_ms();
 	if (!philo->dead)
 		printf("%d Philo %d is eating 🍝\n", get_ms(), philo->philo);
 	pthread_mutex_unlock(philo->print);
 	usleep(philo->to_eat * 1000);
-	philo->last_meal = get_ms();
 	pthread_mutex_unlock(philo->fork_l);
 	pthread_mutex_unlock(philo->fork_r);
 }
@@ -168,11 +157,8 @@ void	*routine(void *ptr)
 	t_philo	*philo;
 
 	philo = (t_philo *)ptr;
-	if (philo->philo == 1)
-		usleep(1000);
-	philo->last_meal = get_ms();
-	pthread_mutex_lock(philo->print);
-	pthread_mutex_unlock(philo->print);
+	if (philo->philo % 2 != 0)
+		usleep(500);
 	while (1)
 	{
 		if (philo->dead)
@@ -200,7 +186,7 @@ void	destroy_forks(t_philo *philos, int count)
 	}
 }
 
-int	set_forks(pthread_mutex_t *forks, pthread_mutex_t *print, t_philo *philos, int count)
+int	init_mutexes(pthread_mutex_t *forks, pthread_mutex_t *print, t_philo *philos, int count)
 {
 	int	i;
 
@@ -258,20 +244,30 @@ void	kill_philos(t_philo *philos, int count)
 		philos[i++].dead = 1;
 }
 
-void	*death_checker(void *ptr)
+void	*supervise(void *ptr)
 {
 	int		i;
 	t_philo	*philos;
 
 	i = 0;
 	philos = (t_philo *)ptr;
+	while (i < philos->num_of_philos)
+	{
+		philos[i++].last_meal = get_ms();
+		printf("%d Philo %d started\n", philos[i - 1].last_meal, philos[i - 1].philo);
+	}
 	while (1)
 	{
 		if (i == philos->num_of_philos)
 			i = 0;
 		if (!philos[i].meals)
 			return (NULL);
-		if (philos[i].dead == 1)
+		if (get_ms() >= philos[i].last_meal + philos[i].to_die)
+		{
+			philos[i].dead = 1;
+			printf("%d Philo %d died\n", get_ms(), philos[i].philo);
+		}
+		if (philos[i].dead)
 		{
 			kill_philos(philos, philos->num_of_philos);
 			return (NULL);
@@ -286,13 +282,13 @@ int	simulation(int argc, char **argv, int count)
 	t_philo			philos[count];
 	pthread_mutex_t	forks[count];
 	pthread_mutex_t	print;
-	pthread_t		checker;
+	pthread_t		supervisor;
 
 	i = 0;
 	init_philos(philos, argc, argv);
-	if (set_forks(forks, &print, philos, count))
+	if (init_mutexes(forks, &print, philos, count))
 		return (1);
-	if (pthread_create(&checker, NULL, &death_checker, philos) != 0)
+	if (pthread_create(&supervisor, NULL, &supervise, philos) != 0)
 	{
 		destroy_forks(philos, count);
 		return (write(2, "creating threads failed\n", 24));
@@ -307,7 +303,7 @@ int	simulation(int argc, char **argv, int count)
 		i++;
 	}
 	i = 0;
-	if (pthread_join(checker, NULL) != 0)
+	if (pthread_join(supervisor, NULL) != 0)
 	{
 		destroy_forks(philos, count);
 		return (write(2, "joining threads failed\n", 23));
