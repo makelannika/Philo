@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:46:35 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/17 13:58:54 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/18 20:00:25 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typedef struct	s_philo
+typedef struct s_philo
 {
 	int				num_of_philos;
 	int				philo;
@@ -33,6 +33,16 @@ typedef struct	s_philo
 	pthread_mutex_t	*fork_r;
 	pthread_mutex_t	*print;
 	pthread_t		thread;
-} t_philo;
+}	t_philo;
+
+int		arg_validation(int argc, char **argv);
+int		ft_atoi(const char *str);
+int		init_philos(t_philo **philos, int argc, char **argv);
+int		init_mutexes(pthread_mutex_t *frks, pthread_mutex_t *prnt, t_philo *ph);
+int		threading(pthread_mutex_t *forks, t_philo *philos, int count);
+void	*routine(void *ptr);
+void	kill_philos(t_philo *philos, int count);
+int		free_all(pthread_mutex_t *forks, t_philo *philos, int count);
+int		get_ms(void);
 
 #endif

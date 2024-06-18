@@ -6,18 +6,20 @@
 #    By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/10 12:46:50 by amakela           #+#    #+#              #
-#    Updated: 2024/06/14 17:10:40 by amakela          ###   ########.fr        #
+#    Updated: 2024/06/18 19:56:32 by amakela          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME 	=	philo
 
-INCLUDE =	philo.h
+INCLUDE =	include/philo.h
 
 CC		=	cc
 CFLAGS 	=	-Wall -Wextra -Werror
 
-CFILES	=	main.c
+CFILES	=	src/main.c		src/arg_validation.c	\
+			src/utils.c		src/initialization.c	\
+			src/routine.c	src/threading.c			
 
 OFILES	= $(CFILES:.c=.o)
 
