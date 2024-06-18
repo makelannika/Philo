@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 12:56:19 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/18 13:19:36 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,18 +98,9 @@ int	get_ms(void)
 void	lonely_philo(t_philo *philo)
 {
 	usleep(philo->to_die * 1000);
-	printf("%d Philo %d died\n", get_ms(), philo->philo);
+	pthread_mutex_unlock(philo->fork_l);
 	philo->dead = 1;
 	return ;
-}
-
-void	philo_dead(t_philo *philo)
-{
-	pthread_mutex_lock(philo->print);
-	if (!philo->dead)
-		printf("%d Philo %d died\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
-	philo->dead = 1;
 }
 
 void	thinking(t_philo *philo)
