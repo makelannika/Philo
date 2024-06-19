@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:27:32 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 19:57:10 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 15:10:41 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ static int	check_values(char **argv)
 		return (write(2, "invalid time to eat\n", 20));
 	if (ft_atoi(argv[4]) < 1)
 		return (write(2, "invalid time to sleep\n", 22));
-	if (argv[5] && ft_atoi(argv[5]) == 0)
-		return (1);
+	if (argv[5] && ft_atoi(argv[5]) < 1)
+		return (write(2, "invalid number of meals\n", 24));
 	return (0);
 }
 
