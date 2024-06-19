@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 19:57:32 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 17:19:12 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ void	set_mutex(pthread_mutex_t *fork, pthread_mutex_t *print, t_philo *philo)
 	int	i;
 
 	i = 0;
+	if (philo->num_of_philos == 1)
+	{
+		philo[i].fork_l = &fork[i];
+		philo[i].print = print;
+		return ;
+	}
 	while (i < philo->num_of_philos)
 	{
 		philo[i].fork_l = &fork[i];
@@ -27,25 +33,27 @@ void	set_mutex(pthread_mutex_t *fork, pthread_mutex_t *print, t_philo *philo)
 	philo[i - 1].fork_r = &fork[0];
 }
 
-int	init_mutexes(pthread_mutex_t *forks, pthread_mutex_t *print, t_philo *philo)
+int	init_mutexes(pthread_mutex_t **forks,
+		pthread_mutex_t *print, t_philo *philos)
 {
 	int	i;
 
 	i = 0;
-	forks = malloc(sizeof(pthread_mutex_t) * philo->num_of_philos);
-	if (!forks)
+	*forks = malloc(sizeof(pthread_mutex_t) * philos->num_of_philos);
+	if (!*forks)
 	{
-		free(philo);
+		free(philos);
 		return (1);
 	}
-	while (i < philo->num_of_philos)
+	while (i < philos->num_of_philos)
 	{
-		if (pthread_mutex_init(&forks[i++], NULL))
-			return (free_all(forks, philo, i));
+		if (pthread_mutex_init((*forks) + i, NULL))
+			return (free_all(*forks, philos, i));
+		i++;
 	}
 	if (pthread_mutex_init(print, NULL))
-		return (free_all(forks, philo, i));
-	set_mutex(forks, print, philo);
+		return (free_all(*forks, philos, i));
+	set_mutex(*forks, print, philos);
 	return (0);
 }
 

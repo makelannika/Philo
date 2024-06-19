@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:46:35 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 20:00:25 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 17:00:59 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ typedef struct s_philo
 int		arg_validation(int argc, char **argv);
 int		ft_atoi(const char *str);
 int		init_philos(t_philo **philos, int argc, char **argv);
-int		init_mutexes(pthread_mutex_t *frks, pthread_mutex_t *prnt, t_philo *ph);
+int		init_mutexes(pthread_mutex_t **forks,
+			pthread_mutex_t *print, t_philo *philos);
 int		threading(pthread_mutex_t *forks, t_philo *philos, int count);
 void	*routine(void *ptr);
 void	kill_philos(t_philo *philos, int count);

@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:37:33 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 19:50:46 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 17:00:56 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	destroy_mutexes(t_philo *philos, int count)
 	int	i;
 
 	i = 0;
-	while (i < count - 1)
+	while (i < count)
 		pthread_mutex_destroy(philos[i++].fork_l);
 }
 
