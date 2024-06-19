@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:29:56 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 20:24:42 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 21:32:05 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,13 @@ static void	*supervise(void *ptr)
 		pthread_mutex_lock(philos->eat);
 		if (get_ms() > philos[i].last_meal + philos[i].to_die)
 		{
-			philos[i].dead = 1;
 			pthread_mutex_lock(philos->print);
 			printf("%d Philo %d died\n", get_ms(), philos[i].philo);
 			pthread_mutex_unlock(philos->print);
-		}
-		pthread_mutex_unlock(philos->eat);
-		if (philos[i].dead)
-		{
 			kill_philos(philos, philos->num_of_philos);
 			return (NULL);
 		}
+		pthread_mutex_unlock(philos->eat);
 		i++;
 	}
 }
