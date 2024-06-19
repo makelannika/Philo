@@ -6,34 +6,37 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 17:19:12 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 20:58:54 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	set_mutex(pthread_mutex_t *fork, pthread_mutex_t *print, t_philo *philo)
+void	set_mutex(pthread_mutex_t *forks, pthread_mutex_t *eat,
+		pthread_mutex_t *print, t_philo *philos)
 {
 	int	i;
 
 	i = 0;
-	if (philo->num_of_philos == 1)
+	if (philos->num_of_philos == 1)
 	{
-		philo[i].fork_l = &fork[i];
-		philo[i].print = print;
+		philos[i].fork_l = &forks[i];
+		philos[i].print = print;
+		philos[i].eat = eat;
 		return ;
 	}
-	while (i < philo->num_of_philos)
+	while (i < philos->num_of_philos)
 	{
-		philo[i].fork_l = &fork[i];
-		philo[i].fork_r = &fork[i + 1];
-		philo[i].print = print;
+		philos[i].fork_l = &forks[i];
+		philos[i].fork_r = &forks[i + 1];
+		philos[i].print = print;
+		philos[i].eat = eat;
 		i++;
 	}
-	philo[i - 1].fork_r = &fork[0];
+	philos[i - 1].fork_r = &forks[0];
 }
 
-int	init_mutexes(pthread_mutex_t **forks,
+int	init_mutexes(pthread_mutex_t **forks, pthread_mutex_t *eat,
 		pthread_mutex_t *print, t_philo *philos)
 {
 	int	i;
@@ -47,13 +50,18 @@ int	init_mutexes(pthread_mutex_t **forks,
 	}
 	while (i < philos->num_of_philos)
 	{
-		if (pthread_mutex_init((*forks) + i, NULL))
+		if (pthread_mutex_init(*forks + i, NULL))
 			return (free_all(*forks, philos, i));
 		i++;
 	}
 	if (pthread_mutex_init(print, NULL))
 		return (free_all(*forks, philos, i));
-	set_mutex(*forks, print, philos);
+	if (pthread_mutex_init(eat, NULL))
+	{
+		pthread_mutex_destroy(print);
+		return (free_all(*forks, philos, i));
+	}
+	set_mutex(*forks, eat, print, philos);
 	return (0);
 }
 

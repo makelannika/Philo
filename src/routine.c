@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:33:39 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/18 19:57:47 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 20:15:21 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,12 @@ static void	eating(t_philo *philo)
 	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d has taken right fork 🍴\n", get_ms(), philo->philo);
-	philo->last_meal = get_ms();
+	pthread_mutex_unlock(philo->print);
+	pthread_mutex_lock(philo->eat);
+	if (get_ms() <= philo->last_meal + philo->to_die)
+		philo->last_meal = get_ms();
+	pthread_mutex_unlock(philo->eat);
+	pthread_mutex_lock(philo->print);
 	if (!philo->dead)
 		printf("%d Philo %d is eating 🍝\n", get_ms(), philo->philo);
 	pthread_mutex_unlock(philo->print);

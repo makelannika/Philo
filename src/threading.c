@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:29:56 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 16:35:22 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/19 20:24:42 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,21 @@ static void	*supervise(void *ptr)
 
 	i = 0;
 	philos = (t_philo *)ptr;
-	while (i < philos->num_of_philos)
-		philos[i++].last_meal = get_ms();
 	while (1)
 	{
 		if (i == philos->num_of_philos)
 			i = 0;
 		if (!philos[i].meals)
 			return (NULL);
-		if (get_ms() >= philos[i].last_meal + philos[i].to_die)
+		pthread_mutex_lock(philos->eat);
+		if (get_ms() > philos[i].last_meal + philos[i].to_die)
 		{
 			philos[i].dead = 1;
+			pthread_mutex_lock(philos->print);
 			printf("%d Philo %d died\n", get_ms(), philos[i].philo);
+			pthread_mutex_unlock(philos->print);
 		}
+		pthread_mutex_unlock(philos->eat);
 		if (philos[i].dead)
 		{
 			kill_philos(philos, philos->num_of_philos);
@@ -74,11 +76,16 @@ static int	create_threads(pthread_t *supervisor, t_philo *philos, int count)
 
 int	threading(pthread_mutex_t *forks, t_philo *philos, int count)
 {
-	pthread_t		supervisor;
+	int			i;
+	pthread_t	supervisor;
 
+	i = 0;
+	while (i < philos->num_of_philos)
+		philos[i++].last_meal = get_ms();
 	if (!create_threads(&supervisor, philos, philos->num_of_philos))
 		join_threads(&supervisor, philos, philos->num_of_philos);
 	pthread_mutex_destroy(philos->print);
+	pthread_mutex_destroy(philos->eat);
 	free_all(forks, philos, count);
 	return (0);
 }

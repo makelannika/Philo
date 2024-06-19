@@ -6,13 +6,13 @@
 #    By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/10 12:46:50 by amakela           #+#    #+#              #
-#    Updated: 2024/06/18 19:56:32 by amakela          ###   ########.fr        #
+#    Updated: 2024/06/19 20:53:13 by amakela          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME 	=	philo
 
-INCLUDE =	include/philo.h
+INCLUDE =	-I ./include
 
 CC		=	cc
 CFLAGS 	=	-Wall -Wextra -Werror
@@ -27,6 +27,9 @@ all: $(NAME)
 
 $(NAME): $(OFILES)
 	$(CC) $(CFLAGS) $(OFILES) -o $(NAME)
+	
+%.o: %.c
+	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
 
 clean:
 	@rm -rf $(OFILES)
