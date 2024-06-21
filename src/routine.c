@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:33:39 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 21:33:47 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/21 16:16:29 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,12 @@ static void	lonely_philo(t_philo *philo)
 
 static void	thinking(t_philo *philo)
 {
-	pthread_mutex_lock(philo->print);
-	if (!philo->dead)
-		printf("%d Philo %d is thinking 💭\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
+	print_status_change("is thinking\n", philo);
 }
 
 static void	sleeping(t_philo *philo)
 {
-	pthread_mutex_lock(philo->print);
-	if (!philo->dead)
-		printf("%d Philo %d is sleeping 💤\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
+	print_status_change("is sleeping\n", philo);
 	if (!philo->dead)
 		usleep(philo->to_sleep * 1000);
 }
@@ -41,26 +35,20 @@ static void	sleeping(t_philo *philo)
 static void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->fork_l);
-	pthread_mutex_lock(philo->print);
-	if (!philo->dead)
-		printf("%d Philo %d has taken left fork 🍴\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
+	print_status_change("has taken a fork\n", philo);
 	if (philo->num_of_philos == 1)
 		return (lonely_philo(philo));
 	pthread_mutex_lock(philo->fork_r);
-	pthread_mutex_lock(philo->print);
-	if (!philo->dead)
-		printf("%d Philo %d has taken right fork 🍴\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
+	print_status_change("has taken a fork\n", philo);
 	pthread_mutex_lock(philo->eat);
 	if (get_ms() <= philo->last_meal + philo->to_die)
 		philo->last_meal = get_ms();
+	if (philo->meals > 0)
+		philo->meals--;
 	pthread_mutex_unlock(philo->eat);
-	pthread_mutex_lock(philo->print);
+	print_status_change("is eating\n", philo);
 	if (!philo->dead)
-		printf("%d Philo %d is eating 🍝\n", get_ms(), philo->philo);
-	pthread_mutex_unlock(philo->print);
-	usleep(philo->to_eat * 1000);
+		usleep(philo->to_eat * 1000);
 	pthread_mutex_unlock(philo->fork_l);
 	pthread_mutex_unlock(philo->fork_r);
 }
@@ -77,9 +65,6 @@ void	*routine(void *ptr)
 		if (philo->dead)
 			return (ptr);
 		eating(philo);
-		philo->meals--;
-		if (!philo->meals)
-			return (ptr);
 		sleeping(philo);
 		thinking(philo);
 	}

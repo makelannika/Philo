@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 20:58:54 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/21 15:52:51 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,14 @@ void	set_mutex(pthread_mutex_t *forks, pthread_mutex_t *eat,
 	while (i < philos->num_of_philos)
 	{
 		philos[i].fork_l = &forks[i];
-		philos[i].fork_r = &forks[i + 1];
 		philos[i].print = print;
 		philos[i].eat = eat;
+		if (i == philos->num_of_philos -1)
+			philos[i].fork_r = &forks[0];
+		else
+			philos[i].fork_r = &forks[i + 1];
 		i++;
 	}
-	philos[i - 1].fork_r = &forks[0];
 }
 
 int	init_mutexes(pthread_mutex_t **forks, pthread_mutex_t *eat,
@@ -51,15 +53,15 @@ int	init_mutexes(pthread_mutex_t **forks, pthread_mutex_t *eat,
 	while (i < philos->num_of_philos)
 	{
 		if (pthread_mutex_init(*forks + i, NULL))
-			return (free_all(*forks, philos, i));
+			return (free_philos_and_forks(*forks, philos, i));
 		i++;
 	}
 	if (pthread_mutex_init(print, NULL))
-		return (free_all(*forks, philos, i));
+		return (free_philos_and_forks(*forks, philos, i));
 	if (pthread_mutex_init(eat, NULL))
 	{
 		pthread_mutex_destroy(print);
-		return (free_all(*forks, philos, i));
+		return (free_philos_and_forks(*forks, philos, i));
 	}
 	set_mutex(*forks, eat, print, philos);
 	return (0);

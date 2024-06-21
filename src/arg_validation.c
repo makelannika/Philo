@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:27:32 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/19 20:57:09 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/21 13:09:11 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	ft_atoi(const char *str)
 
 static int	check_values(char **argv)
 {
-	if (ft_atoi(argv[1]) < 1 || ft_atoi(argv[1]) > 200)
+	if (ft_atoi(argv[1]) < 1)
 		return (write(2, "error: invalid number of philosophers\n", 38));
 	if (ft_atoi(argv[2]) < 1)
 		return (write(2, "error: invalid time to die\n", 27));
