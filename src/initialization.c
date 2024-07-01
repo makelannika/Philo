@@ -6,73 +6,91 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/21 15:52:51 by amakela          ###   ########.fr       */
+/*   Updated: 2024/06/30 17:59:51 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	set_mutex(pthread_mutex_t *forks, pthread_mutex_t *eat,
-		pthread_mutex_t *print, t_philo *philos)
+static void	set_mutex(t_mutex *mutexes, t_philo *philos)
 {
 	int	i;
 
 	i = 0;
 	if (philos->num_of_philos == 1)
 	{
-		philos[i].fork_l = &forks[i];
-		philos[i].print = print;
-		philos[i].eat = eat;
+		philos[i].fork_l = mutexes->forks + i;
+		philos[i].print = &mutexes->print;
+		philos[i].eat = &mutexes->eat;
+		philos[i].kill = &mutexes->kill;
 		return ;
 	}
 	while (i < philos->num_of_philos)
 	{
-		philos[i].fork_l = &forks[i];
-		philos[i].print = print;
-		philos[i].eat = eat;
+		philos[i].fork_l = mutexes->forks + i;
+		philos[i].print = &mutexes->print;
+		philos[i].eat = &mutexes->eat;
+		philos[i].kill = &mutexes->kill;
 		if (i == philos->num_of_philos -1)
-			philos[i].fork_r = &forks[0];
+			philos[i].fork_r = mutexes->forks;
 		else
-			philos[i].fork_r = &forks[i + 1];
+			philos[i].fork_r = mutexes->forks + i + 1;
 		i++;
 	}
 }
 
-int	init_mutexes(pthread_mutex_t **forks, pthread_mutex_t *eat,
-		pthread_mutex_t *print, t_philo *philos)
+static int	init_forks(t_mutex *mutexes, t_philo *philos)
 {
 	int	i;
 
 	i = 0;
-	*forks = malloc(sizeof(pthread_mutex_t) * philos->num_of_philos);
-	if (!*forks)
+	mutexes->forks = malloc(sizeof(pthread_mutex_t) * philos->num_of_philos);
+	if (!mutexes->forks)
 	{
 		free(philos);
 		return (1);
 	}
 	while (i < philos->num_of_philos)
 	{
-		if (pthread_mutex_init(*forks + i, NULL))
-			return (free_philos_and_forks(*forks, philos, i));
+		if (pthread_mutex_init(mutexes->forks + i, NULL))
+			return (free_philos_and_forks(mutexes->forks, philos, i));
 		i++;
 	}
-	if (pthread_mutex_init(print, NULL))
-		return (free_philos_and_forks(*forks, philos, i));
-	if (pthread_mutex_init(eat, NULL))
+	return (0);
+}
+
+int	init_mutexes(t_mutex *mutexes, t_philo *philos)
+{
+	int	count;
+
+	count = philos->num_of_philos;
+	if (init_forks(mutexes, philos))
+		return (1);
+	if (pthread_mutex_init(&mutexes->print, NULL))
+		return (free_philos_and_forks(mutexes->forks, philos, count));
+	if (pthread_mutex_init(&mutexes->eat, NULL))
 	{
-		pthread_mutex_destroy(print);
-		return (free_philos_and_forks(*forks, philos, i));
+		pthread_mutex_destroy(&mutexes->print);
+		return (free_philos_and_forks(mutexes->forks, philos, count));
 	}
-	set_mutex(*forks, eat, print, philos);
+	if (pthread_mutex_init(&mutexes->kill, NULL))
+	{
+		pthread_mutex_destroy(&mutexes->print);
+		pthread_mutex_destroy(&mutexes->eat);
+		return (free_philos_and_forks(mutexes->forks, philos, count));
+	}
+	set_mutex(mutexes, philos);
 	return (0);
 }
 
 int	init_philos(t_philo **philos, int argc, char **argv)
 {
-	int		i;
-	t_philo	philo;
+	int				i;
+	t_philo			philo;
+	struct timeval	time;
 
 	i = 0;
+	gettimeofday(&time, NULL);
 	*philos = malloc(sizeof(t_philo) * ft_atoi(argv[1]));
 	if (!*philos)
 		return (write(2, "error: malloc failed\n", 21));
@@ -86,6 +104,7 @@ int	init_philos(t_philo **philos, int argc, char **argv)
 		philo.meals = ft_atoi(argv[5]);
 	else
 		philo.meals = -1;
+	philo.beginning = time.tv_sec * 1000 + time.tv_usec / 1000;
 	while (i < philo.num_of_philos)
 	{
 		philo.philo = i + 1;
