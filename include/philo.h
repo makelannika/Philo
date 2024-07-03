@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:46:35 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/30 18:00:45 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/01 13:06:07 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,11 @@ int		init_mutexes(t_mutex *mutexes, t_philo *philos);
 int		threading(pthread_mutex_t *forks, t_philo *philos, int count);
 void	*supervise(void *ptr);
 void	*routine(void *ptr);
+int		philo_dead(t_philo *philo);
 void	do_sleep(int time, t_philo *philo);
 void	print_status_change(char *message, t_philo *philo);
+int		get_ms(t_philo *philo);
 int		free_philos_and_forks(pthread_mutex_t *forks,
 			t_philo *philos, int count);
-int		get_ms(t_philo *philo);
 
 #endif

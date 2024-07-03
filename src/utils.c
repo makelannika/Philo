@@ -6,36 +6,42 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:37:33 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/30 19:10:54 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/02 19:29:53 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	do_sleep(int time, t_philo *philo)
+int	philo_dead(t_philo *philo)
 {
 	pthread_mutex_lock(philo->kill);
-	if (!philo->dead)
+	if (philo->dead)
 	{
 		pthread_mutex_unlock(philo->kill);
-		usleep(time * 1000);
-		return ;
+		return (1);
 	}
 	pthread_mutex_unlock(philo->kill);
+	return (0);
+}
+
+void	do_sleep(int time, t_philo *philo)
+{
+	int	end;
+
+	end = get_ms(philo) + time;
+	if (!philo_dead(philo))
+	{
+		while (get_ms(philo) < end)
+			usleep(500);
+	}
 }
 
 void	print_status_change(char *message, t_philo *philo)
 {
-	pthread_mutex_lock(philo->kill);
-	if (!philo->dead)
-	{
-		pthread_mutex_unlock(philo->kill);
-		pthread_mutex_lock(philo->print);
+	pthread_mutex_lock(philo->print);
+	if (!philo_dead(philo))
 		printf("%d %d %s", get_ms(philo), philo->philo, message);
-		pthread_mutex_unlock(philo->print);
-		return ;
-	}
-	pthread_mutex_unlock(philo->kill);
+	pthread_mutex_unlock(philo->print);
 }
 
 int	get_ms(t_philo *philo)
@@ -44,21 +50,4 @@ int	get_ms(t_philo *philo)
 
 	gettimeofday(&time, NULL);
 	return (time.tv_sec * 1000 + time.tv_usec / 1000 - philo->beginning);
-}
-
-static void	destroy_mutexes(t_philo *philos, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count)
-		pthread_mutex_destroy(philos[i++].fork_l);
-}
-
-int	free_philos_and_forks(pthread_mutex_t *forks, t_philo *philos, int count)
-{
-	destroy_mutexes(philos, count);
-	free(forks);
-	free(philos);
-	return (1);
 }

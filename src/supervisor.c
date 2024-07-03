@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 16:10:42 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/30 18:59:40 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/03 17:15:55 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,8 @@ static int	all_ate(t_philo *philos)
 		}
 		i++;
 	}
-	pthread_mutex_lock(philos->print);
-	kill_philos(philos, philos->num_of_philos);
-	pthread_mutex_unlock(philos->print);
 	pthread_mutex_unlock(philos->eat);
+	kill_philos(philos, philos->num_of_philos);
 	return (1);
 }
 

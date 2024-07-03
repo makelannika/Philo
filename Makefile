@@ -6,7 +6,7 @@
 #    By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/10 12:46:50 by amakela           #+#    #+#              #
-#    Updated: 2024/06/30 16:33:28 by amakela          ###   ########.fr        #
+#    Updated: 2024/07/01 13:02:39 by amakela          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ CFLAGS 	=	-Wall -Wextra -Werror
 CFILES	=	src/main.c			src/arg_validation.c	\
 			src/utils.c			src/initialization.c	\
 			src/routine.c		src/threading.c			\
-			src/supervisor.c
+			src/supervisor.c	src/cleaning.c
 
 OFILES	= $(CFILES:.c=.o)
 

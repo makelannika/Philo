@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/30 17:59:51 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/03 17:18:26 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ int	init_philos(t_philo **philos, int argc, char **argv)
 		return (write(2, "error: malloc failed\n", 21));
 	philo = (t_philo){0};
 	philo.num_of_philos = ft_atoi(argv[1]);
-	philo.dead = 0;
 	philo.to_die = ft_atoi(argv[2]);
 	philo.to_eat = ft_atoi(argv[3]);
 	philo.to_sleep = ft_atoi(argv[4]);
