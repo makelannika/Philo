@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:37:33 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/02 19:29:53 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/03 17:37:17 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,13 @@ int	philo_dead(t_philo *philo)
 void	do_sleep(int time, t_philo *philo)
 {
 	int	end;
+	int death;
 
+	death = philo->last_meal + philo->to_die;
 	end = get_ms(philo) + time;
 	if (!philo_dead(philo))
 	{
-		while (get_ms(philo) < end)
+		while (get_ms(philo) < end && get_ms(philo) < death)
 			usleep(500);
 	}
 }
