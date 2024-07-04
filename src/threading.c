@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:29:56 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/04 14:07:38 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/04 14:50:22 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ static int	create_threads(pthread_t *supervisor, t_philo *philos, int count)
 			return (write(2, "creating threads failed\n", 24));
 		i++;
 	}
-	printf("threads created: %d\n", get_ms(philos));
 	return (0);
 }
 
