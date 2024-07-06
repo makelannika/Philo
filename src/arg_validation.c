@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:27:32 by amakela           #+#    #+#             */
-/*   Updated: 2024/06/21 13:09:11 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/06 20:56:26 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	arg_validation(int argc, char **argv)
 	i = 1;
 	j = 0;
 	if (argc < 5 || argc > 6)
-		return (write(2, "invalid amount of arguments\n", 28));
+		return (write(2, "error: invalid amount of arguments\n", 35));
 	while (argv[i])
 	{
 		if (argv[i][j] == '+' || argv[i][j] == '-')
@@ -78,7 +78,7 @@ int	arg_validation(int argc, char **argv)
 		while (argv[i][j])
 		{
 			if (argv[i][j] < '0' || argv[i][j] > '9')
-				return (write(2, "arguments need to be numbers only\n", 34));
+				return (write(2, "error: arguments must be numbers only\n", 38));
 			j++;
 		}
 		i++;

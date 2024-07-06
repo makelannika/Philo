@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:29:56 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/04 14:50:22 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/06 19:28:41 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,11 @@ static int	create_threads(pthread_t *supervisor, t_philo *philos, int count)
 	return (0);
 }
 
-int	threading(pthread_mutex_t *forks, t_philo *philos, int count)
+int	threading(t_philo *philos)
 {
 	pthread_t	supervisor;
 
 	if (!create_threads(&supervisor, philos, philos->num_of_philos))
 		join_threads(&supervisor, philos, philos->num_of_philos);
-	pthread_mutex_destroy(philos->print);
-	pthread_mutex_destroy(philos->eat);
-	pthread_mutex_destroy(philos->kill);
-	free_philos_and_forks(forks, philos, count);
 	return (0);
 }
