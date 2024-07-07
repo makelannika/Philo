@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:31:23 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/06 22:08:00 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/07 17:23:20 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,27 +79,22 @@ static int	init_forks(t_mutex *mutexes, t_philo *philos, int count)
 
 int	init_mutexes(t_mutex *mutexes, t_philo *philos)
 {
-	int	i;
-	int	count;
-
-	i = 0;
-	count = philos->num_of_philos;
-	if (init_forks(mutexes, philos, count))
+	if (init_forks(mutexes, philos, philos->num_of_philos))
 		return (1);
 	if (pthread_mutex_init(&mutexes->print, NULL))
 	{
-		destroy_forks(mutexes->forks, count);
+		destroy_forks(mutexes->forks, philos->num_of_philos);
 		free(philos);
 		return (write(2, "error: pthread_mutex_init failed\n", 33));
 	}
-	if (init_eat_and_kill(philos, count))
+	if (init_eat_and_kill(philos, philos->num_of_philos))
 	{
 		pthread_mutex_destroy(&mutexes->print);
-		destroy_forks(mutexes->forks, count);
+		destroy_forks(mutexes->forks, philos->num_of_philos);
 		free(philos);
 		return (1);
 	}
-	set_mutex(mutexes, philos, count);
+	set_mutex(mutexes, philos, philos->num_of_philos);
 	return (0);
 }
 

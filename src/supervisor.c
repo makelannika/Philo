@@ -6,13 +6,13 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/30 16:10:42 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/06 20:51:09 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/07 21:20:02 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static void	*kill_philos(t_philo *philos, int count)
+void	*kill_philos(t_philo *philos, int count)
 {
 	int	i;
 
@@ -58,7 +58,7 @@ void	*supervise(void *ptr)
 	{
 		if (i == philos->num_of_philos)
 			i = 0;
-		if (all_ate(philos))
+		if (philo_dead(&philos[i]) || all_ate(philos))
 			return (NULL);
 		pthread_mutex_lock(&philos[i].eat);
 		if (get_ms(philos) >= philos[i].last_meal + philos[i].to_die)

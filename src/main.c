@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:36:11 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/06 15:26:19 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/07 21:16:24 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init_mutexes(&mutexes, philos))
 		return (1);
-	if (threading(philos))
+	if (threading(&mutexes, philos))
 		return (1);
-	free_and_destroy(mutexes, philos);
 	return (0);
 }
