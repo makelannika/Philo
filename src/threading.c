@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:29:56 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/07 21:24:37 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/08 17:01:56 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ static int	create_threads(pthread_t *supervisor, t_philo *philos, int count)
 		if (pthread_create(&philos[i].thread, NULL, &routine, &philos[i]))
 		{
 			kill_philos(philos, i);
+			join_threads(supervisor, philos, i);
 			return (write(2, "error: pthread_create failed\n", 29));
 		}
 		i++;
@@ -52,9 +53,9 @@ int	threading(t_mutex *mutexes, t_philo *philos)
 	pthread_t	supervisor;
 
 	ret = 0;
-	if (create_threads(&supervisor, philos, philos->num_of_philos))
-		ret++;
-	if (join_threads(&supervisor, philos, philos->num_of_philos))
+	if (!create_threads(&supervisor, philos, philos->num_of_philos))
+		ret = join_threads(&supervisor, philos, philos->num_of_philos);
+	else
 		ret++;
 	free_and_destroy(*mutexes, philos);
 	return (ret);

@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:46:35 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/07 21:03:55 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/08 13:40:19 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void	do_sleep(size_t time, t_philo *philo);
 void	print_status_change(char *message, t_philo *philo);
 size_t	get_ms(t_philo *philo);
 void	destroy_forks(pthread_mutex_t *forks, int count);
-int		free_and_destroy(t_mutex mutexes, t_philo *philos);
 void	destroy_kill(t_philo *philos, int count);
 void	destroy_eat(t_philo *philos, int count);
+int		free_and_destroy(t_mutex mutexes, t_philo *philos);
 
 #endif
