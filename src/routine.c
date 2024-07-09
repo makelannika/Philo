@@ -6,7 +6,7 @@
 /*   By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 19:33:39 by amakela           #+#    #+#             */
-/*   Updated: 2024/07/07 15:18:51 by amakela          ###   ########.fr       */
+/*   Updated: 2024/07/09 12:22:16 by amakela          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	*routine(void *ptr)
 	t_philo	*philo;
 
 	philo = (t_philo *)ptr;
-	print_status_change("is thinking\n", philo);
+	thinking(philo);
 	if (philo->philo % 2 == 0)
 		usleep(5000);
 	while (1)
