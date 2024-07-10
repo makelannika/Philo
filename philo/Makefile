@@ -6,7 +6,7 @@
 #    By: amakela <amakela@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/10 12:46:50 by amakela           #+#    #+#              #
-#    Updated: 2024/07/08 16:06:15 by amakela          ###   ########.fr        #
+#    Updated: 2024/07/09 19:16:28 by amakela          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME 	=	philo
 
 INCLUDE =	-I ./include
 
-CC		=	cc
+CC		=	cc 
 CFLAGS 	=	-Wall -Wextra -Werror
 
 CFILES	=	src/main.c			src/arg_validation.c	\
