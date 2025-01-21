@@ -1,5 +1,5 @@
 
-Philosophers is a classic concurrency problem used to demonstrate challenges like resource allocation and deadlock prevention in multi-threaded programming.
+**Philosophers** is a classic concurrency problem used to demonstrate challenges like resource allocation and deadlock prevention in multi-threaded programming.
 
 This project simulates philosophers sitting at a round table, alternating between eating, sleeping and thinking while sharing forks to eat spaghetti.
 There are as many forks as there are philosophers. To be able to eat, a philosopher needs to grab two forks, one on their left and one on their right.
